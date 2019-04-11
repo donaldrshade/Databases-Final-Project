@@ -46,32 +46,33 @@ public class Convert {
 		HibernateUtil.getSessionFactory().close();
 	}
 	public static void convertTeams(){
-		
+		//This will be the grab.
+		//PreparedStatement ps = conn.prepareStatement()
 	}
 		
 	public static void convertPlayers() {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select " + 
-						"playerID, " + 
-						"nameFirst, " + 
-						"nameLast, " + 
-						"nameGiven, "+ 
-						"birthDay, " + 
-						"birthMonth, " + 
-						"birthYear, " + 
-						"deathDay, "+ 
-						"deathMonth, " + 
-						"deathYear, " + 
-						"bats, " + 
-						"throws, " + 
-						"birthCity, " + 
-						"birthState, " + 
-            "birthCountry, " +
-						"debut, " + 
-						"finalGame " +
-						"from Master");
-						// for debugging comment previous line, uncomment next line
-						//"from Master where playerID = 'bondsba01' or playerID = 'youklke01';");
+				"playerID, " + 
+				"nameFirst, " + 
+				"nameLast, " + 
+				"nameGiven, "+ 
+				"birthDay, " + 
+				"birthMonth, " + 
+				"birthYear, " + 
+				"deathDay, "+ 
+				"deathMonth, " + 
+				"deathYear, " + 
+				"bats, " + 
+				"throws, " + 
+				"birthCity, " + 
+				"birthState, " + 
+	            "birthCountry, " +
+				"debut, " + 
+				"finalGame " +
+				"from Master");
+				// for debugging comment previous line, uncomment next line
+				//"from Master where playerID = 'bondsba01' or playerID = 'youklke01';");
 			ResultSet rs = ps.executeQuery();
 			int count=0; // for progress feedback only
 			while (rs.next()) {
@@ -92,49 +93,49 @@ public class Convert {
 				p.setGivenName(rs.getString("nameGiven"));
         
 				java.util.Date birthDay = convertIntsToDate(rs.getInt("birthYear"), rs.getInt("birthMonth"), rs.getInt("birthDay"));
-        if (birthDay!=null) p.setBirthDay(birthDay);
-		java.util.Date deathDay = convertIntsToDate(rs.getInt("deathYear"), rs.getInt("deathMonth"), rs.getInt("deathDay"));
-		if (deathDay!=null) p.setDeathDay(deathDay);
-
-		// need to do some data scrubbing for bats and throws columns
-		String hand = rs.getString("bats");
-		if (hand!=null){
-          if (hand.equalsIgnoreCase("B")){
-            hand = "S";
-          }
-          else if (hand.equalsIgnoreCase(""))
-            hand = null;
-		} 
-		p.setBattingHand(hand);
-
-		// Clean up throwing hand
-		hand = rs.getString("throws");
-        if (hand.equalsIgnoreCase("")){
-            hand = null;
-		} 
-		p.setThrowingHand(hand);
-
-		p.setBirthCity(rs.getString("birthCity"));
-		p.setBirthState(rs.getString("birthState"));
-        p.setBirthCountry(rs.getString("birthCountry"));
-        
-        // Clean up debut and final game data.
-        try {
-          java.util.Date firstGame = rs.getDate("debut");
-          if (firstGame!=null) p.setFirstGame(firstGame);
-        }
-        catch (SQLException e){
-          // Ignore conversion error - remains null;
-          System.out.println(pid + ": debut invalid format");
-        }
-        try {
-          java.util.Date lastGame = rs.getDate("finalGame");
-          if (lastGame!=null) p.setLastGame(lastGame);
-        }
-        catch (SQLException e){
-          // Ignore conversion error - remains null
-          System.out.println(pid + ": finalGame invalid format");
-        }
+		        if (birthDay!=null) p.setBirthDay(birthDay);
+				java.util.Date deathDay = convertIntsToDate(rs.getInt("deathYear"), rs.getInt("deathMonth"), rs.getInt("deathDay"));
+				if (deathDay!=null) p.setDeathDay(deathDay);
+		
+				// need to do some data scrubbing for bats and throws columns
+				String hand = rs.getString("bats");
+				if (hand!=null){
+		          if (hand.equalsIgnoreCase("B")){
+		            hand = "S";
+		          }
+		          else if (hand.equalsIgnoreCase(""))
+		            hand = null;
+				} 
+				p.setBattingHand(hand);
+		
+				// Clean up throwing hand
+				hand = rs.getString("throws");
+		        if (hand.equalsIgnoreCase("")){
+		            hand = null;
+				} 
+				p.setThrowingHand(hand);
+		
+				p.setBirthCity(rs.getString("birthCity"));
+				p.setBirthState(rs.getString("birthState"));
+		        p.setBirthCountry(rs.getString("birthCountry"));
+		        
+		        // Clean up debut and final game data.
+		        try {
+		          java.util.Date firstGame = rs.getDate("debut");
+		          if (firstGame!=null) p.setFirstGame(firstGame);
+		        }
+		        catch (SQLException e){
+		          // Ignore conversion error - remains null;
+		          System.out.println(pid + ": debut invalid format");
+		        }
+		        try {
+		          java.util.Date lastGame = rs.getDate("finalGame");
+		          if (lastGame!=null) p.setLastGame(lastGame);
+		        }
+		        catch (SQLException e){
+		          // Ignore conversion error - remains null
+		          System.out.println(pid + ": finalGame invalid format");
+		        }
         
 				addPositions(p, pid);
 				// players bio collected, now go after stats
