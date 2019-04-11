@@ -1,0 +1,5 @@
+Routine in ConvertPlayers
+--GRab Data
+--For each data place into player
+--Positions are put into an Set
+--Player Season is also put into Set
