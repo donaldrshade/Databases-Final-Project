@@ -1,0 +1,7 @@
+TODO List
+Finish Team - DONE
+Create TeamSeason - DONE
+Create TeamSeasonPlayer
+Create Table insert code
+Create HibernateUtilFunction
+

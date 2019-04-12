@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -24,6 +23,10 @@ public class Team {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Integer teamId;
+	
+	@OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="id.player")
+	@Fetch(FetchMode.JOIN)
+	Set<TeamSeason> seasons = new HashSet<TeamSeason>();
 
 	@Column
 	String name;
@@ -98,8 +101,6 @@ public class Team {
 		Integer hash = 0;
 		if (this.getName()!=null) hash += this.getName().hashCode(); 
 		if (this.getLeague()!=null) hash += this.getLeague().hashCode();
-		if (this.getYearLast()!=null) hash += this.getYearLast().hashCode();
-		if (this.getYearFounded()!=null) hash += this.getYearFounded().hashCode();
 		return hash;
 	}
 	
