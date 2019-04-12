@@ -18,7 +18,7 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-@Entity(name = "team")
+@Entity(name = "Teams")
 public class Team {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,9 +33,9 @@ public class Team {
 	@Column
 	String league;
 	@Column
-	Date yearFounded;
+	Date year_founded;
 	@Column
-	Date yearLast;
+	Date year_last;
 
 	// utility function
 //	public PlayerSeason getPlayerSeason(Integer year) {
@@ -69,18 +69,18 @@ public class Team {
 	}
 
 	public Date getYearFounded() {
-		return yearFounded;
+		return year_founded;
 	}
 
 	public void setYearFounded(Date yearFounded) {
-		this.yearFounded = yearFounded;
+		this.year_founded = yearFounded;
 	}
 	public Date getYearLast() {
-		return yearLast;
+		return year_last;
 	}
 
 	public void setYearLast(Date yearLast) {
-		this.yearLast = yearLast;
+		this.year_last = yearLast;
 	}
 
 

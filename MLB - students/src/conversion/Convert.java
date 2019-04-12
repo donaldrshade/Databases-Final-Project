@@ -22,6 +22,7 @@ public class Convert {
 
 	static Connection conn;
 	static final String MYSQL_CONN_URL = "jdbc:mysql://163.11.238.237/mlb?"
+	//TO SEE DATABASE GOTO 163.11.238.237/phpmyadmin
     + "verifyServerCertificate=false&useSSL=true&" // PPD
     + "user=shade&password=password"; 
 
@@ -42,7 +43,7 @@ public class Convert {
 				e.printStackTrace();
 			}
 		}
-    HibernateUtil.stopConnectionProvider(); //PPD
+		HibernateUtil.stopConnectionProvider(); //PPD
 		HibernateUtil.getSessionFactory().close();
 	}
 	public static void convertTeams(){
@@ -70,9 +71,9 @@ public class Convert {
 	            "birthCountry, " +
 				"debut, " + 
 				"finalGame " +
-				"from Master");
+				//"from Master");
 				// for debugging comment previous line, uncomment next line
-				//"from Master where playerID = 'bondsba01' or playerID = 'youklke01';");
+				"from Master where playerID = 'bondsba01' or playerID = 'youklke01';");
 			ResultSet rs = ps.executeQuery();
 			int count=0; // for progress feedback only
 			while (rs.next()) {

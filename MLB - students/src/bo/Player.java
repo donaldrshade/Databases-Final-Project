@@ -19,7 +19,7 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-@Entity(name = "player")
+@Entity(name = "Players")
 public class Player {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,9 +44,9 @@ public class Player {
 	@Column
 	Date deathDay;
 	@Column
-	String battingHand;
+	String batting_hand;
 	@Column
-	String throwingHand;
+	String throwing_hand;
 	@Column
 	String birthCity;
 	@Column
@@ -114,19 +114,19 @@ public class Player {
 	}
 
 	public String getBattingHand() {
-		return battingHand;
+		return batting_hand;
 	}
 
 	public void setBattingHand(String battingHand) {
-		this.battingHand = battingHand;
+		this.batting_hand = battingHand;
 	}
 
 	public String getThrowingHand() {
-		return throwingHand;
+		return throwing_hand;
 	}
 
 	public void setThrowingHand(String throwingHand) {
-		this.throwingHand = throwingHand;
+		this.throwing_hand = throwingHand;
 	}
 
 	public String getBirthCity() {
