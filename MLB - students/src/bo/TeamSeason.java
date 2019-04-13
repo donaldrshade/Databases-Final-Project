@@ -11,6 +11,11 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.ManyToMany;
+import javax.persistence.FetchType;
+import javax.persistence.JoinTable;
+import java.util.HashSet;
+import java.util.Set;
 
 @SuppressWarnings("serial")
 @Entity(name = "teamseason")
@@ -21,6 +26,17 @@ public class TeamSeason implements Serializable {
 
 	@Embeddable
 	static class TeamSeasonId implements Serializable {
+		//This is from the code he gave us on moodle.
+
+		// @ManyToMany(fetch = FetchType.LAZY)
+		// @JoinTable(name = "teamseasonplayer", 
+   		// joinColumns={
+    	// 	 @JoinColumn(name="teamId", insertable = false, updatable = false), 
+    	// 	 @JoinColumn(name="year",  insertable = false, updatable = false)}, 
+   		// inverseJoinColumns={
+    	// 	@JoinColumn(name="playerId", insertable = false, updatable = false)})
+		// Set<Player> players = new HashSet<Player>();
+
 		@ManyToOne
 		@JoinColumn(name = "playerid", referencedColumnName = "playerid", insertable = false, updatable = false)
 		Team team;
