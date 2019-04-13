@@ -16,6 +16,7 @@ import bo.FieldingStats;
 import bo.PitchingStats;
 import bo.Player;
 import bo.PlayerSeason;
+import bo.Team;
 import dataaccesslayer.HibernateUtil;
 
 public class Convert {
@@ -48,7 +49,23 @@ public class Convert {
 	}
 	public static void convertTeams(){
 		//This will be the grab.
-		//PreparedStatement ps = conn.prepareStatement()
+		try {
+			PreparedStatement ps = conn.prepareStatement("select distinct franchID from Teams");
+
+			ResultSet franchID = ps.executeQuery();
+			while (franchID.next()) {
+				//get start date for each franchID
+				//get most recent name
+				//get league
+				//check if active or not
+				Team t = new Team();
+				HibernateUtil.persistTeam(t);
+			}
+			franchID.close();
+			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 		
 	public static void convertPlayers() {
