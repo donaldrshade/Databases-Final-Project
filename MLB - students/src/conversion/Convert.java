@@ -8,6 +8,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
+
+import java.util.List;
+
 import java.sql.SQLException;
 
 import bo.BattingStats;
@@ -17,6 +20,7 @@ import bo.PitchingStats;
 import bo.Player;
 import bo.PlayerSeason;
 import bo.Team;
+import bo.TeamSeason;
 import dataaccesslayer.HibernateUtil;
 
 public class Convert {
@@ -31,8 +35,9 @@ public class Convert {
 		try {
 			long startTime = System.currentTimeMillis();
 			conn = DriverManager.getConnection(MYSQL_CONN_URL);
-			convertTeams();
+			
 			convertPlayers();
+			convertTeams();
 			long endTime = System.currentTimeMillis();
 			long elapsed = (endTime - startTime) / (1000*60);
 			System.out.println("Elapsed time in mins: " + elapsed);
@@ -51,44 +56,46 @@ public class Convert {
 	public static void convertTeams(){
 		//This will be the grab.
 		try {
-			PreparedStatement ps = conn.prepareStatement("select distinct franchID from Teams where franchID = 'ARI' or franchID = 'ATL'");
+			PreparedStatement ps = conn.prepareStatement("select distinct franchID from Teams where franchID = 'ATL'");
 
 			ResultSet franchID = ps.executeQuery();
 			while (franchID.next()) {
 				Team t = new Team();
 				//get start date for each franchID
+				String tid = franchID.getString("franchID");
 				PreparedStatement ps2 = conn.prepareStatement("select yearID from Teams where franchID = ? order by yearID asc limit 1");
-				ps2.setString(1, franchID.getString("franchID")); 
+				ps2.setString(1, tid); 
 				ResultSet  rs2 = ps2.executeQuery();  //get the start years for each franchise
 				rs2.next();
 				t.setYearFounded(Integer.parseInt(rs2.getString("yearID")));
 				//get most recent name
 				PreparedStatement ps3 = conn.prepareStatement("select name from Teams where franchID = ? order by yearID desc limit 1");
-				ps3.setString(1, franchID.getString("franchID")); 
+				ps3.setString(1, tid); 
 				ResultSet  rs3 = ps3.executeQuery();  //get the recent name for each team
 				rs3.next();
 				t.setName(rs3.getString("name"));
 				//get league
 				PreparedStatement ps4 = conn.prepareStatement("select lgID from Teams where franchID = ? order by yearID desc limit 1");
-				ps4.setString(1, franchID.getString("franchID")); 
+				ps4.setString(1, tid); 
 				ResultSet  rs4 = ps4.executeQuery();  //get the league id for each franchise
 				rs4.next();
 				t.setLeague(rs4.getString("lgID"));
 				//check if active or not (if not then get end date)
 				PreparedStatement ps5 = conn.prepareStatement("select active from TeamsFranchises where franchID = ?");
-				ps5.setString(1, franchID.getString("franchID")); 
+				ps5.setString(1, tid); 
 				ResultSet  rs5 = ps5.executeQuery();  //get active status of each franchise
 				rs5.next();
 				String active = rs5.getString("active");
 				if(!active.equals("Y")){
 					PreparedStatement ps6 = conn.prepareStatement("select yearID from Teams where franchID = ? order by yearID desc limit 1");
-					ps6.setString(1, franchID.getString("franchID")); 
+					ps6.setString(1, tid); 
 					ResultSet  rs6 = ps6.executeQuery();  //get the recent name for each team
 					rs6.next();
 					t.setYearLast(Integer.parseInt(rs6.getString("yearID")));
 				}else{
 					t.setYearLast(2016);
 				}
+				addSeasons(t, tid);
 				HibernateUtil.persistTeam(t);
 			}
 			franchID.close();
@@ -120,7 +127,7 @@ public class Convert {
 				"finalGame " +
 				//"from Master");
 				// for debugging comment previous line, uncomment next line
-				"from Master where playerID = 'bondsba01' or playerID = 'youklke01';");
+				"from Master where playerID = 'alvarjo01' or playerID = 'bedrost01';");
 			ResultSet rs = ps.executeQuery();
 			int count=0; // for progress feedback only
 			while (rs.next()) {
@@ -229,6 +236,52 @@ public class Convert {
 			e.printStackTrace();
 		}
 		p.setPositions(positions);
+	}
+
+	public static void addSeasons(Team t, String franchID){
+		try {
+			PreparedStatement ps = conn.prepareStatement("select " +
+				"yearID," +
+				"G," +
+				"W," +
+				"L," +
+				"Rank," +
+				"attendance " +
+				"from Teams " +
+				"where franchID = ?");
+			ps.setString(1, franchID);
+			ResultSet rs  = ps.executeQuery();
+			TeamSeason season = null;
+			while(rs.next()){
+				int year = rs.getInt("yearID");
+				season = new TeamSeason(t, year);
+				season.setGamesPlayed(rs.getInt("G"));
+				season.setYear(year);
+				season.setWins(rs.getInt("W"));
+				season.setLosses(rs.getInt("L"));
+				season.setRank(rs.getInt("Rank"));
+				season.setTotalAttendance(rs.getInt("attendance"));
+				PreparedStatement players = conn.prepareStatement("CALL findPlayers(?,?)");
+				players.setInt(1, year);
+				players.setString(2, franchID);
+				ResultSet teamPlayers = players.executeQuery();
+				while(teamPlayers.next()){
+					String first = teamPlayers.getString(1);
+					String last = teamPlayers.getString(2);
+					List<Player> retplayers = HibernateUtil.retrievePlayersByName(first+" "+last, true);
+					if(retplayers.size()>0){
+						Player p = retplayers.get(0);
+						season.addPlayers(p);
+					}
+					
+				}
+				teamPlayers.close();
+				players.close();
+				t.addSeason(season);
+			}
+		} catch (Exception e) {
+		e.printStackTrace();
+	}
 	}
 
 	public static void addSeasons(Player p, String pid) {

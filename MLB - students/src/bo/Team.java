@@ -45,6 +45,13 @@ public class Team {
 //		return null;
 //	}
 
+	public void addSeason(TeamSeason s){
+		seasons.add(s);
+	}
+	public Set<TeamSeason> getSeasons(){
+		return seasons;
+	}
+
 	
 	public Integer getId() {
 		return teamId;
@@ -103,6 +110,4 @@ public class Team {
 		if (this.getLeague()!=null) hash += this.getLeague().hashCode();
 		return hash;
 	}
-	
-	
 }

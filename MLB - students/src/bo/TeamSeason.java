@@ -11,6 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+
+import com.mysql.jdbc.PreparedStatement;
+
 import javax.persistence.ManyToMany;
 import javax.persistence.FetchType;
 import javax.persistence.JoinTable;
@@ -24,18 +27,20 @@ public class TeamSeason implements Serializable {
 	@EmbeddedId
 	TeamSeasonId id;
 
+	//This is from the code he gave us on moodle.
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "teamseasonplayer", 
+	joinColumns={
+	@JoinColumn(name="teamId", insertable = false, updatable = false), 
+	@JoinColumn(name="year",  insertable = false, updatable = false)}, 
+	inverseJoinColumns={
+	@JoinColumn(name="playerId", insertable = false, updatable = false)})
+
+	Set<Player> players = new HashSet<Player>();
+
 	@Embeddable
 	static class TeamSeasonId implements Serializable {
-		//This is from the code he gave us on moodle.
-
-		// @ManyToMany(fetch = FetchType.LAZY)
-		// @JoinTable(name = "teamseasonplayer", 
-   		// joinColumns={
-    	// 	 @JoinColumn(name="teamId", insertable = false, updatable = false), 
-    	// 	 @JoinColumn(name="year",  insertable = false, updatable = false)}, 
-   		// inverseJoinColumns={
-    	// 	@JoinColumn(name="playerId", insertable = false, updatable = false)})
-		// Set<Player> players = new HashSet<Player>();
+		
 
 		@ManyToOne
 		@JoinColumn(name = "teamId", referencedColumnName = "teamId", insertable = false, updatable = false)
@@ -85,7 +90,12 @@ public class TeamSeason implements Serializable {
 		this.id = psi;
 	}
 	
-
+	public void addPlayers(Player p){
+		if(p != null){
+			players.add(p);
+		}
+		
+	}
 
 	public int getWins() {
 		return wins;
