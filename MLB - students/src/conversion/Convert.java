@@ -31,6 +31,7 @@ public class Convert {
 		try {
 			long startTime = System.currentTimeMillis();
 			conn = DriverManager.getConnection(MYSQL_CONN_URL);
+			convertTeams();
 			convertPlayers();
 			long endTime = System.currentTimeMillis();
 			long elapsed = (endTime - startTime) / (1000*60);
@@ -50,15 +51,44 @@ public class Convert {
 	public static void convertTeams(){
 		//This will be the grab.
 		try {
-			PreparedStatement ps = conn.prepareStatement("select distinct franchID from Teams");
+			PreparedStatement ps = conn.prepareStatement("select distinct franchID from Teams where franchID = 'ARI' or franchID = 'ATL'");
 
 			ResultSet franchID = ps.executeQuery();
 			while (franchID.next()) {
-				//get start date for each franchID
-				//get most recent name
-				//get league
-				//check if active or not
 				Team t = new Team();
+				//get start date for each franchID
+				PreparedStatement ps2 = conn.prepareStatement("select yearID from Teams where franchID = ? order by yearID asc limit 1");
+				ps2.setString(1, franchID.getString("franchID")); 
+				ResultSet  rs2 = ps2.executeQuery();  //get the start years for each franchise
+				rs2.next();
+				t.setYearFounded(Integer.parseInt(rs2.getString("yearID")));
+				//get most recent name
+				PreparedStatement ps3 = conn.prepareStatement("select name from Teams where franchID = ? order by yearID desc limit 1");
+				ps3.setString(1, franchID.getString("franchID")); 
+				ResultSet  rs3 = ps3.executeQuery();  //get the recent name for each team
+				rs3.next();
+				t.setName(rs3.getString("name"));
+				//get league
+				PreparedStatement ps4 = conn.prepareStatement("select lgID from Teams where franchID = ? order by yearID desc limit 1");
+				ps4.setString(1, franchID.getString("franchID")); 
+				ResultSet  rs4 = ps4.executeQuery();  //get the league id for each franchise
+				rs4.next();
+				t.setLeague(rs4.getString("lgID"));
+				//check if active or not (if not then get end date)
+				PreparedStatement ps5 = conn.prepareStatement("select active from TeamsFranchises where franchID = ?");
+				ps5.setString(1, franchID.getString("franchID")); 
+				ResultSet  rs5 = ps5.executeQuery();  //get active status of each franchise
+				rs5.next();
+				String active = rs5.getString("active");
+				if(!active.equals("Y")){
+					PreparedStatement ps6 = conn.prepareStatement("select yearID from Teams where franchID = ? order by yearID desc limit 1");
+					ps6.setString(1, franchID.getString("franchID")); 
+					ResultSet  rs6 = ps6.executeQuery();  //get the recent name for each team
+					rs6.next();
+					t.setYearLast(Integer.parseInt(rs6.getString("yearID")));
+				}else{
+					t.setYearLast(2016);
+				}
 				HibernateUtil.persistTeam(t);
 			}
 			franchID.close();

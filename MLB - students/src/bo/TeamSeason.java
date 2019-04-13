@@ -38,7 +38,7 @@ public class TeamSeason implements Serializable {
 		// Set<Player> players = new HashSet<Player>();
 
 		@ManyToOne
-		@JoinColumn(name = "playerid", referencedColumnName = "playerid", insertable = false, updatable = false)
+		@JoinColumn(name = "teamId", referencedColumnName = "teamId", insertable = false, updatable = false)
 		Team team;
 		@Column(name="year")
 		Integer teamYear;

@@ -18,13 +18,13 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-@Entity(name = "Teams")
+@Entity(name = "team")
 public class Team {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Integer teamId;
 	
-	@OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="id.player")
+	@OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="id.team")
 	@Fetch(FetchMode.JOIN)
 	Set<TeamSeason> seasons = new HashSet<TeamSeason>();
 
@@ -33,9 +33,9 @@ public class Team {
 	@Column
 	String league;
 	@Column
-	Date year_founded;
+	int yearFounded;
 	@Column
-	Date year_last;
+	int yearLast;
 
 	// utility function
 //	public PlayerSeason getPlayerSeason(Integer year) {
@@ -68,19 +68,19 @@ public class Team {
 		this.league = league;
 	}
 
-	public Date getYearFounded() {
-		return year_founded;
+	public int getYearFounded() {
+		return yearFounded;
 	}
 
-	public void setYearFounded(Date yearFounded) {
-		this.year_founded = yearFounded;
+	public void setYearFounded(int yearFounded) {
+		this.yearFounded = yearFounded;
 	}
-	public Date getYearLast() {
-		return year_last;
+	public int getYearLast() {
+		return yearLast;
 	}
 
-	public void setYearLast(Date yearLast) {
-		this.year_last = yearLast;
+	public void setYearLast(int yearLast) {
+		this.yearLast = yearLast;
 	}
 
 

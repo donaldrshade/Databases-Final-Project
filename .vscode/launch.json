@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Convert",
+            "request": "launch",
+            "mainClass": "conversion.Convert",
+            "projectName": "CS3610 - MLB - students"
+        }
+    ]
+}
