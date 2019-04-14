@@ -36,7 +36,7 @@ public class Convert {
 			long startTime = System.currentTimeMillis();
 			conn = DriverManager.getConnection(MYSQL_CONN_URL);
 			
-			convertPlayers();
+			//convertPlayers();
 			convertTeams();
 			long endTime = System.currentTimeMillis();
 			long elapsed = (endTime - startTime) / (1000*60);
@@ -136,7 +136,7 @@ public class Convert {
 				// for debugging comment previous line, uncomment next line
 				//"from Master where playerID = 'alvarjo01' or playerID = 'bedrost01';");
 				//clean up here
-				"from Master where thows='S'");
+				"from Master where throws='S'");
 			ResultSet rs = ps.executeQuery();
 			int count=0; // for progress feedback only
 			while (rs.next()) {
@@ -279,20 +279,16 @@ public class Convert {
 					String last = teamPlayers.getString(2);
 					List<Player> retplayers = HibernateUtil.retrievePlayersByName(first+" "+last, true);
 					if(retplayers.size()>0){
-						Player test = new Player();
-						test.setName(first+" "+last);
-						java.util.Date birthDay = convertIntsToDate(rs.getInt("birthYear"), rs.getInt("birthMonth"), rs.getInt("birthDay"));
-		        if (birthDay!=null) test.setBirthDay(birthDay);
-						java.util.Date deathDay = convertIntsToDate(rs.getInt("deathYear"), rs.getInt("deathMonth"), rs.getInt("deathDay"));
-						if (deathDay!=null) test.setDeathDay(deathDay);
-						Player p = null;
-						for(int i=0;i<retplayers.size();i++){
-							if(retplayers.get(i).equals(test)){
-								p = retplayers.get(i);
+						if(retplayers.size()>1){
+							String nameGiven = teamPlayers.getString(3);
+							for(int i=0;i<retplayers.size();i++){
+								if(retplayers.get(i).getGivenName().equalsIgnoreCase(nameGiven)){
+									season.addPlayers(retplayers.get(0));
+								}
 							}
-						}
-						if(p != null){
-							season.addPlayers(p);
+
+						}else{
+							season.addPlayers(retplayers.get(0));
 						}
 					}
 					
