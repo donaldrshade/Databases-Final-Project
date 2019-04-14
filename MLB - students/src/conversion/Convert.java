@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -225,6 +226,23 @@ public class Convert {
 		}
 		return d;
 	}
+	private static boolean areDatesSame(Date a, Date b){
+		if(a == null || b == null){
+			return false;
+		}
+		else if(a.getMonth() != b.getMonth()){
+			return false;
+		}
+		else if(a.getYear() != b.getYear()){
+			return false;
+		}
+		else if(a.getDay() != b.getDay()){
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
 	
 	public static void addPositions(Player p, String pid) {
 		Set<String> positions = new HashSet<String>();
@@ -281,8 +299,11 @@ public class Convert {
 					if(retplayers.size()>0){
 						if(retplayers.size()>1){
 							String nameGiven = teamPlayers.getString(3);
+							Date birthday = convertIntsToDate(teamPlayers.getInt("birthYear"), teamPlayers.getInt("birthMonth"), teamPlayers.getInt("birthDay"));
 							for(int i=0;i<retplayers.size();i++){
-								if(retplayers.get(i).getGivenName().equalsIgnoreCase(nameGiven)){
+								Player tempPlayer = retplayers.get(i);
+								Date temp = tempPlayer.getBirthDay();
+								if(tempPlayer.getGivenName().equalsIgnoreCase(nameGiven) && areDatesSame(temp, birthday)){//temp.compareTo(birthday)==0){
 									season.addPlayers(retplayers.get(i));
 								}
 							}
