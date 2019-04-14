@@ -56,11 +56,15 @@ public class Convert {
 	public static void convertTeams(){
 		//This will be the grab.
 		try {
-			PreparedStatement ps = conn.prepareStatement("select distinct franchID from Teams where franchID = 'ATL'");
+			PreparedStatement ps = conn.prepareStatement("select distinct franchID from Teams "
+				//+"where franchID = 'ATL'");
+				);
 
 			ResultSet franchID = ps.executeQuery();
+			int teams = 0;
 			while (franchID.next()) {
 				Team t = new Team();
+				teams++;
 				//get start date for each franchID
 				String tid = franchID.getString("franchID");
 				PreparedStatement ps2 = conn.prepareStatement("select yearID from Teams where franchID = ? order by yearID asc limit 1");
@@ -97,6 +101,9 @@ public class Convert {
 				}
 				addSeasons(t, tid);
 				HibernateUtil.persistTeam(t);
+				if(teams % 100 == 0){
+					System.out.println("Teams completed: "+teams);
+				}
 			}
 			franchID.close();
 			ps.close();
@@ -127,7 +134,9 @@ public class Convert {
 				"finalGame " +
 				//"from Master");
 				// for debugging comment previous line, uncomment next line
-				"from Master where playerID = 'alvarjo01' or playerID = 'bedrost01';");
+				//"from Master where playerID = 'alvarjo01' or playerID = 'bedrost01';");
+				//clean up here
+				"from Master where thows='S'");
 			ResultSet rs = ps.executeQuery();
 			int count=0; // for progress feedback only
 			while (rs.next()) {
@@ -270,8 +279,21 @@ public class Convert {
 					String last = teamPlayers.getString(2);
 					List<Player> retplayers = HibernateUtil.retrievePlayersByName(first+" "+last, true);
 					if(retplayers.size()>0){
-						Player p = retplayers.get(0);
-						season.addPlayers(p);
+						Player test = new Player();
+						test.setName(first+" "+last);
+						java.util.Date birthDay = convertIntsToDate(rs.getInt("birthYear"), rs.getInt("birthMonth"), rs.getInt("birthDay"));
+		        if (birthDay!=null) test.setBirthDay(birthDay);
+						java.util.Date deathDay = convertIntsToDate(rs.getInt("deathYear"), rs.getInt("deathMonth"), rs.getInt("deathDay"));
+						if (deathDay!=null) test.setDeathDay(deathDay);
+						Player p = null;
+						for(int i=0;i<retplayers.size();i++){
+							if(retplayers.get(i).equals(test)){
+								p = retplayers.get(i);
+							}
+						}
+						if(p != null){
+							season.addPlayers(p);
+						}
 					}
 					
 				}
