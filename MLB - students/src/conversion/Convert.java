@@ -283,7 +283,7 @@ public class Convert {
 							String nameGiven = teamPlayers.getString(3);
 							for(int i=0;i<retplayers.size();i++){
 								if(retplayers.get(i).getGivenName().equalsIgnoreCase(nameGiven)){
-									season.addPlayers(retplayers.get(0));
+									season.addPlayers(retplayers.get(i));
 								}
 							}
 
