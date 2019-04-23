@@ -1,5 +1,6 @@
 package dataaccesslayer;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Hibernate;
@@ -10,6 +11,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.service.spi.Stoppable;
+import org.omg.IOP.IOR;
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 
 import bo.Player;
@@ -180,7 +182,51 @@ public class HibernateUtil {
 		}
 		return t;
 	}	
-	
+	public static Integer[] retrieveTeamsIdByPlayerYear(Integer pid,Integer year) {
+        Integer[] t = null;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.getTransaction();
+		try {
+			tx.begin();
+			org.hibernate.Query query;
+			query =	session.createSQLQuery("Select teamId from teamseasonplayer where playerId = :pid and year = :year");
+			query.setParameter("pid", pid);
+			query.setParameter("year", year);
+			t = new Integer[query.list().size()];
+			for(int i = 0;i<query.list().size();i++){
+				t[i] =  ((BigDecimal) query.list().get(i)).intValue();
+			}
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session.isOpen()) session.close();
+		}
+		return t;
+	}	
+	public static Team[] retrieveTeamsByPlayerYear(Integer pid, Integer year) {
+		Integer[] tid = retrieveTeamsIdByPlayerYear(pid, year);
+        Team[] t = new Team[tid.length];
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.getTransaction();
+		try {
+			for(int i = 0;i<tid.length;i++){
+				tx.begin();
+				org.hibernate.Query query;
+				query = session.createQuery("from bo.Team where id = :id ");
+				query.setParameter("id", tid[i]);
+				if (query.list().size()>0) t[i] = (Team) query.list().get(i);
+				tx.commit();
+			}
+		} catch (Exception e) {
+			tx.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session.isOpen()) session.close();
+		}
+		return t;
+	}
 	public static TeamSeason retrieveTeamSeasonById(Integer teamId, Integer year) {
         TeamSeason ts =null;
 		Session session = HibernateUtil.getSessionFactory().openSession();

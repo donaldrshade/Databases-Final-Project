@@ -125,24 +125,32 @@ public class PlayerController extends BaseController {
         
         view.buildTable(playerTable);
         // now for seasons
-        String[][] seasonTable = new String[seasons.size()+1][7];
+        String[][] seasonTable = new String[seasons.size()+1][8];
         seasonTable[0][0] = "Year";
         seasonTable[0][1] = "Games Played";
         seasonTable[0][2] = "Salary";
-        seasonTable[0][3] = "Hits";
-        seasonTable[0][4] = "At Bats";
-        seasonTable[0][5] = "Batting Average";
-        seasonTable[0][6] = "Home Runs";
+        seasonTable[0][3] = "Team(s)";
+        seasonTable[0][4] = "Hits";
+        seasonTable[0][5] = "At Bats";
+        seasonTable[0][6] = "Batting Average";
+        seasonTable[0][7] = "Home Runs";
         int i = 0;
         for (PlayerSeason ps: list) {
         	i++;
         	seasonTable[i][0] = ps.getYear().toString();
         	seasonTable[i][1] = ps.getGamesPlayed().toString();
-        	seasonTable[i][2] = DOLLAR_FORMAT.format(ps.getSalary());
-        	seasonTable[i][3] = ps.getBattingStats().getHits().toString();
-        	seasonTable[i][4] = ps.getBattingStats().getAtBats().toString();
-        	seasonTable[i][5] = DOUBLE_FORMAT.format(ps.getBattingAverage());
-        	seasonTable[i][6] = ps.getBattingStats().getHomeRuns().toString();
+            seasonTable[i][2] = DOLLAR_FORMAT.format(ps.getSalary());
+            seasonTable[i][3] = "";
+        	seasonTable[i][4] = ps.getBattingStats().getHits().toString();
+        	seasonTable[i][5] = ps.getBattingStats().getAtBats().toString();
+        	seasonTable[i][6] = DOUBLE_FORMAT.format(ps.getBattingAverage());
+            seasonTable[i][7] = ps.getBattingStats().getHomeRuns().toString();
+            bo.Team[] t = HibernateUtil.retrieveTeamsByPlayerYear(p.getId(),ps.getYear());
+            for(int j = 0;j<t.length;j++){
+                if(j>0) seasonTable[i][3] += ",";//if this is 2 add a comma
+                seasonTable[i][3] += "<a href='team.ssp?id='"+t[j].getId()+"&action=details'>"+t[j].getName()+"</a>";//put the link in
+            }
+            
         }
         view.buildTable(seasonTable);
     }

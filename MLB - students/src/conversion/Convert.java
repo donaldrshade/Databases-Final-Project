@@ -1,6 +1,6 @@
 package conversion;
 
-import java.sql.Connection;
+/*import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,10 +22,10 @@ import bo.Player;
 import bo.PlayerSeason;
 import bo.Team;
 import bo.TeamSeason;
-import dataaccesslayer.HibernateUtil;
+import dataaccesslayer.HibernateUtil;//*/
 
 public class Convert {
-
+	/*
 	static Connection conn;
 	static final String MYSQL_CONN_URL = "jdbc:mysql://163.11.238.237/mlb?"
 	//TO SEE DATABASE GOTO 163.11.238.237/phpmyadmin
@@ -534,5 +534,5 @@ public class Convert {
 		return s;
 	}
 
-
+	*/
 }
