@@ -251,5 +251,49 @@ public class HibernateUtil {
 		}
 		return ts;
 	}
-	
+	public static Integer[] retrievePlayersIdByTeamYear(Integer tid,Integer year) {
+        Integer[] p = null;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.getTransaction();
+		try {
+			tx.begin();
+			org.hibernate.Query query;
+			query =	session.createSQLQuery("Select playerId from teamseasonplayer where teamId = :tid and year = :year");
+			query.setParameter("tid", tid);
+			query.setParameter("year", year);
+			p = new Integer[query.list().size()];
+			for(int i = 0;i<query.list().size();i++){
+				p[i] =  ((BigDecimal) query.list().get(i)).intValue();
+			}
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session.isOpen()) session.close();
+		}
+		return p;
+	}	
+	public static Player[] retrievePlayersByTeamYear(Integer tid, Integer year) {
+		Integer[] pid = retrievePlayersIdByTeamYear(tid, year);
+        Player[] p = new Player[pid.length];
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.getTransaction();
+		try {
+			for(int i = 0;i<pid.length;i++){
+				tx.begin();
+				org.hibernate.Query query;
+				query = session.createQuery("from bo.Player where id = :id ");
+				query.setParameter("id", pid[i]);
+				if (query.list().size()>0) p[i] = (Player) query.list().get(i);
+				tx.commit();
+			}
+		} catch (Exception e) {
+			tx.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session.isOpen()) session.close();
+		}
+		return p;
+	}
 }
