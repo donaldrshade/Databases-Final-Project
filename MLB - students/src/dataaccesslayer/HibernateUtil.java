@@ -14,7 +14,7 @@ import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 
 import bo.Player;
 import bo.Team;
-
+import bo.TeamSeason;
 
 public class HibernateUtil {
 
@@ -25,12 +25,12 @@ public class HibernateUtil {
 			Configuration cfg = new Configuration()
 				.addAnnotatedClass(bo.Player.class)
 				.addAnnotatedClass(bo.PlayerSeason.class)
+				.addAnnotatedClass(bo.Team.class)
+				.addAnnotatedClass(bo.TeamSeason.class)
 				.addAnnotatedClass(bo.BattingStats.class)
 				.addAnnotatedClass(bo.CatchingStats.class)
 				.addAnnotatedClass(bo.FieldingStats.class)
 				.addAnnotatedClass(bo.PitchingStats.class)
-				.addAnnotatedClass(bo.Team.class)
-				.addAnnotatedClass(bo.TeamSeason.class)
 				.configure();
 			StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
 			applySettings(cfg.getProperties());
@@ -64,7 +64,7 @@ public class HibernateUtil {
 		    query.setParameter("id", id);
 		    if (query.list().size()>0) {
 		    	p = (Player) query.list().get(0);
-		    	Hibernate.initialize(p.getSeasons());
+		    	Hibernate.initialize(p.getTeamSeasons());
 		    }
 			tx.commit();
 		} catch (Exception e) {
@@ -107,7 +107,7 @@ public class HibernateUtil {
 		Transaction tx = session.getTransaction();
 		try {
 			tx.begin();
-			session.save(p);
+			session.saveOrUpdate(p);
 			tx.commit();
 		} catch (Exception e) {
 			tx.rollback();
@@ -118,6 +118,7 @@ public class HibernateUtil {
 		}
 		return true;
 	}
+	
 	public static boolean persistTeam(Team t) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.getTransaction();
@@ -134,5 +135,75 @@ public class HibernateUtil {
 		}
 		return true;
 	}
-		
+
+	@SuppressWarnings("unchecked")
+	public static List<Team> retrieveTeamsByName(String nameQuery, Boolean exactMatch) {
+        List<Team> list=null;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.getTransaction();
+		try {
+			tx.begin();
+			org.hibernate.Query query;
+			if (exactMatch) {
+				query = session.createQuery("from bo.Team where name = :name ");
+			} else {
+				query = session.createQuery("from bo.Team where name like '%' + :name + '%' ");
+			}
+		    query.setParameter("name", nameQuery);
+		    list = query.list();
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session.isOpen()) session.close();
+		}
+		return list;
+	}
+
+	public static Team retrieveTeamById(Integer id) {
+        Team t =null;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.getTransaction();
+		try {
+			tx.begin();
+			org.hibernate.Query query;
+			query = session.createQuery("from bo.Team where id = :id ");
+		    query.setParameter("id", id);
+		    if (query.list().size()>0) t = (Team) query.list().get(0);
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session.isOpen()) session.close();
+		}
+		return t;
+	}	
+	
+	public static TeamSeason retrieveTeamSeasonById(Integer teamId, Integer year) {
+        TeamSeason ts =null;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.getTransaction();
+		try {
+			tx.begin();
+			org.hibernate.Query query;
+			query = session.createQuery("from bo.TeamSeason where teamId = :teamId and year = :year ");
+		    query.setParameter("teamId", teamId);
+		    query.setParameter("year", year);
+		    if (query.list().size()>0) {
+		    	ts = (TeamSeason) query.list().get(0);
+		    	Hibernate.initialize(ts.getPlayers());
+		    	//Hibernate.initialize(ts.getTeam());
+		    }
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session.isOpen()) session.close();
+		}
+		return ts;
+	}
+	
 }
