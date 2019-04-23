@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import view.TeamView;
+import controller.ControllerFactory;
 import bo.Team;
 import bo.TeamSeason;
-import bo.PlayerCareerStats;
-import bo.PlayerSeason;
 import dataaccesslayer.HibernateUtil;
 
 public class TeamController extends BaseController {
@@ -20,7 +19,6 @@ public class TeamController extends BaseController {
         view = new TeamView();
         process(query);
     }
-    
     @Override
     protected void performAction() {
         String action = keyVals.get("action");
@@ -51,16 +49,16 @@ public class TeamController extends BaseController {
         view.buildLinkToSearch();
     }
 
-    // protected final void processDetails() {
-    //     String id = keyVals.get("id");
-    //     if (id == null) {
-    //         return;
-    //     }
-    //     Player p = (Player) HibernateUtil.retrievePlayerById(Integer.valueOf(id));
-    //     if (p == null) return;
-    //     buildSearchResultsTablePlayerDetail(p);
-    //     view.buildLinkToSearch();
-    // }
+    protected final void processDetails() {
+        String id = keyVals.get("id");
+        if (id == null) {
+            return;
+        }
+        Team t = (Team) HibernateUtil.retrieveTeamById(Integer.valueOf(id));
+        if (t == null) return;
+        buildSearchResultsTableTeamDetail(t);
+        view.buildLinkToSearch();
+    }
 
     private void buildSearchResultsTableTeam(List<Team> bos) {
         // need a row for the table headers
@@ -73,7 +71,7 @@ public class TeamController extends BaseController {
         for (int i = 0; i < bos.size(); i++) {
             Team t = bos.get(i);
             String tid = t.getId().toString();
-            table[i + 1][0] = tid; // view.encodeLink(new String[]{"id"}, new String[]{tid}, tid, ACT_DETAIL, SSP_TEAM);
+            table[i + 1][0] = view.encodeLink(new String[]{"id"}, new String[]{tid}, tid, ACT_DETAIL, "team");
             table[i + 1][1] = t.getName();
             table[i + 1][2] = t.getLeague();
             table[i + 1][3] = t.getYearFounded().toString();
@@ -96,16 +94,6 @@ public class TeamController extends BaseController {
         teamTable[0][2] = "Year Founded";
         teamTable[0][3] = "Most Recent Year";
 
-        // String pos="";
-        // boolean first = true;
-        // for (String s: positions) {
-        // 	if (first) {
-        // 		pos += s;
-        // 		first = false;
-        // 	} else {
-        // 		pos += ", " + s;	
-        // 	}
-        // }
         teamTable[1][0] = t.getName();
         teamTable[1][0] = t.getLeague();
         teamTable[1][0] = t.getYearFounded().toString();
