@@ -11,7 +11,6 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.service.spi.Stoppable;
-import org.omg.IOP.IOR;
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 
 import bo.Player;

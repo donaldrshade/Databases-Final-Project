@@ -9,18 +9,19 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 class SimpleWebServer{
-    public static int SERVER_PORT = 8080;    
-    public static String WWW_ROOT = "www/";
-   
-    public static void main(String args[]) throws Exception  {
-      // see if we do not use default server port
-      if (args.length >= 1) {
-        SERVER_PORT = Integer.parseInt(args[0]);
-      }
-      // see if we want a different root
-      if (args.length >= 2) {
-        WWW_ROOT = args[1];
-      }
+  public static int SERVER_PORT = 8080;    
+  public static String WWW_ROOT = "www/";
+  
+  public static void main(String args[]){
+    // see if we do not use default server port
+    if (args.length >= 1) {
+      SERVER_PORT = Integer.parseInt(args[0]);
+    }
+    // see if we want a different root
+    if (args.length >= 2) {
+      WWW_ROOT = args[1];
+    }
+    try{
       // create server socket
       ServerSocket listenSocket = new ServerSocket(SERVER_PORT);
       System.out.println("server listening at: " + listenSocket);
@@ -40,5 +41,8 @@ class SimpleWebServer{
             return; // if we get here, abort
         } 
       } // end of while (true)
-    } // end of main
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+  } // end of main
 } // end of class SimpleWebServer

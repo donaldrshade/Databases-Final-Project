@@ -92,11 +92,11 @@ public class TeamController extends BaseController {
         teamTable[0][1] = "League";
         teamTable[0][2] = "Year Founded";
         teamTable[0][3] = "Most Recent Year";
-
+        
         teamTable[1][0] = t.getName();
-        teamTable[1][0] = t.getLeague();
-        teamTable[1][0] = t.getYearFounded().toString();
-        teamTable[1][0] = t.getYearLast().toString();
+        teamTable[1][1] = t.getLeague();
+        teamTable[1][2] = t.getYearFounded().toString();
+        teamTable[1][3] = t.getYearLast().toString();
         
         view.buildTable(teamTable);
         // now for seasons
