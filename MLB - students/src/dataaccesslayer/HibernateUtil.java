@@ -276,22 +276,8 @@ public class HibernateUtil {
 	public static Player[] retrievePlayersByTeamYear(Integer tid, Integer year) {
 		Integer[] pid = retrievePlayersIdByTeamYear(tid, year);
         Player[] p = new Player[pid.length];
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.getTransaction();
-		try {
-			for(int i = 0;i<pid.length;i++){
-				tx.begin();
-				org.hibernate.Query query;
-				query = session.createQuery("from bo.Player where id = :id ");
-				query.setParameter("id", pid[i]);
-				if (query.list().size()>0) p[i] = (Player) query.list().get(i);
-				tx.commit();
-			}
-		} catch (Exception e) {
-			tx.rollback();
-			e.printStackTrace();
-		} finally {
-			if (session.isOpen()) session.close();
+		for(int i = 0;i<pid.length;i++){
+			p[i] = retrievePlayerById(pid[i]);
 		}
 		return p;
 	}

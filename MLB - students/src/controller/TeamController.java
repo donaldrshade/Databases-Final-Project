@@ -28,7 +28,9 @@ public class TeamController extends BaseController {
             processSearch();
         } else if (action.equalsIgnoreCase(ACT_DETAIL)) {
             processDetails();
-        } 
+        } else if (action.equalsIgnoreCase(ACT_ROSTER)){
+            generateRosterTable();
+        }
     }
 
     protected void processSearchForm() {
@@ -57,6 +59,41 @@ public class TeamController extends BaseController {
         if (t == null) return;
         buildSearchResultsTableTeamDetail(t);
         view.buildLinkToSearch();
+    }
+    public final void generateRosterTable() {
+        Integer tid = Integer.valueOf(keyVals.get("tid"));
+        Integer year = Integer.valueOf(keyVals.get("yid"));
+        if (tid == null || year  == null) {
+            return;
+        }
+        Team t = (Team) HibernateUtil.retrieveTeamById(Integer.valueOf(tid));
+        if (t == null) return;
+        String[][] headerTable = new String[2][4];
+        headerTable[0][0] = "Name";
+        headerTable[0][1] = "League";
+        headerTable[0][2] = "Year Founded";
+        headerTable[0][3] = "Player Payroll";
+        headerTable[1][0] = t.getName();
+        headerTable[1][1] = t.getLeague();
+        headerTable[1][2] = t.getYearFounded().toString();
+        
+        bo.Player[] p = HibernateUtil.retrievePlayersByTeamYear(tid, year);
+        if(p==null) return;
+        String[][] playerTable = new String[p.length+1][3];
+        playerTable[0][0] = "Name";
+        playerTable[0][1] = "Games Played";
+        playerTable[0][2] = "Salary";
+        Double totalSal = 0.00;
+        for(int i = 1;i<p.length+1;i++){
+            playerTable[i][0] = "<a href=player.ssp?id="+p[i-1].getId()+"&action=details>"+p[i-1].getName()+"</a>";
+            playerTable[i][1] = p[i-1].getPlayerSeason(year).getGamesPlayed().toString();
+            double sal = p[i-1].getPlayerSeason(year).getSalary();
+            playerTable[i][2] = DOLLAR_FORMAT.format(sal);
+            totalSal+=sal;
+        }
+        headerTable[1][3] = DOLLAR_FORMAT.format(totalSal);
+        view.buildTable(headerTable);
+        view.buildTable(playerTable);
     }
 
     private void buildSearchResultsTableTeam(List<Team> bos) {
