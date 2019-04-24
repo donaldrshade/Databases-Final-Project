@@ -5,7 +5,8 @@
             "name": "CodeLens (Launch) - SimpleWebServer",
             "request": "launch",
             "mainClass": "webserver.SimpleWebServer",
-            "projectName": "CS3610 - MLB - students"
+            "projectName": "CS3610 - MLB - students",
+            "cwd":"${workspaceFolder}"
         },
         {
             "type": "java",
