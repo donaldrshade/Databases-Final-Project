@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - SimpleWebServer",
+            "request": "launch",
+            "mainClass": "webserver.SimpleWebServer",
+            "projectName": "CS3610 - MLB - students"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - Convert",
             "request": "launch",
             "mainClass": "conversion.Convert",
