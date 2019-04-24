@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import view.TeamView;
-import controller.ControllerFactory;
 import bo.Team;
 import bo.TeamSeason;
 import dataaccesslayer.HibernateUtil;
@@ -28,7 +27,7 @@ public class TeamController extends BaseController {
         } else if (action.equalsIgnoreCase(ACT_SEARCH)) {
             processSearch();
         } else if (action.equalsIgnoreCase(ACT_DETAIL)) {
-            // processDetails();
+            processDetails();
         } 
     }
 
