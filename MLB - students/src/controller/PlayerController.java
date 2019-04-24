@@ -148,6 +148,9 @@ public class PlayerController extends BaseController {
             bo.Team[] t = HibernateUtil.retrieveTeamsByPlayerYear(p.getId(),ps.getYear());
             for(int j = 0;j<t.length;j++){
                 if(j>0) seasonTable[i][3] += ",";//if this is 2 add a comma
+                if(t[j] == null){
+                    int pause = 1;
+                }
                 seasonTable[i][3] += "<a href=\"team.ssp?id="+t[j].getId()+"&action=details\">"+t[j].getName()+"</a>";//put the link in
             }
             

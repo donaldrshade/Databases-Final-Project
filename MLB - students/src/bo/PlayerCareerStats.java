@@ -52,7 +52,11 @@ public class PlayerCareerStats {
 
 	// derived stats
 	public Double getBattingAverage() {
-		return this.getHits()/this.getAtBats().doubleValue();
+		Double temp = this.getHits()/this.getAtBats().doubleValue();
+		if (Double.isNaN(temp))
+			return 0.000;
+		else
+			return temp;
 	}
 	
 	public Double getERA() {

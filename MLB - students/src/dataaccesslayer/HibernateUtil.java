@@ -208,21 +208,30 @@ public class HibernateUtil {
 		Integer[] tid = retrieveTeamsIdByPlayerYear(pid, year);
         Team[] t = new Team[tid.length];
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction tx = session.getTransaction();
-		try {
+		try{
 			for(int i = 0;i<tid.length;i++){
-				tx.begin();
-				org.hibernate.Query query;
-				query = session.createQuery("from bo.Team where id = :id ");
-				query.setParameter("id", tid[i]);
-				if (query.list().size()>0) t[i] = (Team) query.list().get(i);
-				tx.commit();
+				Transaction tx = session.getTransaction();
+				try{
+					if(tid[i] == 15820){
+						int pause = 0;
+					}
+					
+					tx.begin();
+					org.hibernate.Query query;
+					query = session.createQuery("from bo.Team where id = :id ");
+					query.setParameter("id", tid[i]);
+					List temp = query.list();
+					if (query.list().size()>0) t[i] = (Team) query.list().get(0);
+					tx.commit();
+				}
+				catch (Exception e) {
+					tx.rollback();
+					e.printStackTrace();
+				}
 			}
-		} catch (Exception e) {
-			tx.rollback();
-			e.printStackTrace();
-		} finally {
-			if (session.isOpen()) session.close();
+		}
+		finally{
+			if(session.isOpen()) session.close();
 		}
 		return t;
 	}

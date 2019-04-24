@@ -140,11 +140,11 @@ public class TeamController extends BaseController {
         String[][] seasonTable = new String[seasons.size()+1][7];
         seasonTable[0][0] = "Year";
         seasonTable[0][1] = "Games Played";
-        seasonTable[0][2] = "Salary";
-        seasonTable[0][3] = "Hits";
-        seasonTable[0][4] = "At Bats";
-        seasonTable[0][5] = "Batting Average";
-        seasonTable[0][6] = "Home Runs";
+        seasonTable[0][2] = "Roster";
+        seasonTable[0][3] = "Wins";
+        seasonTable[0][4] = "Losses";
+        seasonTable[0][5] = "Rank";
+        seasonTable[0][6] = "Attendance";
         int i = 0;
         for (TeamSeason ts: list) {
         	i++;

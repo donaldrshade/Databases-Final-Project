@@ -21,7 +21,9 @@ public abstract class BaseView {
         sb.append("<HTML>\r\n");
         sb.append("<HEAD><TITLE>");
         sb.append(title);
-        sb.append("</TITLE></HEAD>\r\n");
+        sb.append("</TITLE>\r\n");
+        sb.append("<link rel='stylesheet' type='text/css' href='mlb.css'>");
+        sb.append("</HEAD>\r\n");
         sb.append("<BODY>\r\n");
         sb.append("<h2>MLB - ");
         sb.append(title);
@@ -63,16 +65,17 @@ public abstract class BaseView {
     }
 
     public final void buildTable(String[][] table) {
-        body.append("<table border=1>\r\n");
+        body.append("<table>\r\n");
         // print table header row
-        body.append("<tr>");
+        body.append("<thead><tr>");
         for (int i = 0; i < table[0].length; i++) {
             body.append("<th>");
             body.append(table[0][i]);
             body.append("</th>\r\n");
         }
-        body.append("</tr>\r\n");
+        body.append("</tr></thead>\r\n");
         // print table rows
+        body.append("<tbody>\r\n");
         for (int row = 1; row < table.length; row++) {
             body.append("<tr>\r\n");
             for (int col = 0; col < table[row].length; col++) {
@@ -82,7 +85,7 @@ public abstract class BaseView {
             }
             body.append("</tr>\r\n");
         }
-        body.append("</table>\r\n");
+        body.append("</tbody></table>\r\n");
     }
     
     /** 
